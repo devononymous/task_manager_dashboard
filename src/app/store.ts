@@ -4,13 +4,12 @@ import { persistStore, persistReducer } from "redux-persist"; // Import these mi
 import taskReducer from "./features/TaskSlice";
 import themeReducer from "./features/ThemeSlice";
 import filterReducer from "./features/filterSlice";
-import storage from "redux-persist/lib/storage"; // Local storage for persistence
-
+import storage from "redux-persist/lib/storage"; 
 // Persist configuration
 const persistConfig = {
-  key: 'root',       // Unique key for the persisted state
-  storage,           // Local storage (you can also use sessionStorage if needed)
-  whitelist: ['tasks'],  // Only persist 'tasks' slice (filter and theme will not be persisted)
+  key: 'root',      
+  storage,          
+  whitelist: ['tasks'],  
 };
 
 // Persisted task reducer
@@ -19,9 +18,9 @@ const persistedTaskReducer = persistReducer(persistConfig, taskReducer);
 // Store setup with persisted reducer for tasks
 const store = configureStore({
   reducer: {
-    tasks: persistedTaskReducer,  // Persisted reducer for tasks
-    theme: themeReducer,          // Normal reducer for theme (not persisted)
-    filter: filterReducer,        // Normal reducer for filter
+    tasks: persistedTaskReducer,  
+    theme: themeReducer,          
+    filter: filterReducer,      
   },
 });
 

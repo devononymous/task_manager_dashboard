@@ -52,6 +52,6 @@ export const {
     resetFilters,
 } = filterSlice.actions;
 
-export const selectFilters = (state: RootState) => state.filters;
+export const selectFilters = (state: RootState) => state.filter;
 
 export default filterSlice.reducer;

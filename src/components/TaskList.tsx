@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import  { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../app/store";
 import { Task, moveTask, fetchTasks, updateTaskAsync, deleteTaskAsync } from "../app/features/TaskSlice";
 import {
@@ -8,6 +8,7 @@ import {
   Draggable,
   DropResult,
 } from "react-beautiful-dnd";
+import type { AppDispatch } from "../app/store";
 
 const statusColors: Record<Task["status"], string> = {
   "To Do": "bg-gray-200 text-gray-800",
@@ -17,7 +18,7 @@ const statusColors: Record<Task["status"], string> = {
 };
 
 const TaskList: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const loading = useSelector((state: RootState) => state.tasks.loading);
   const error = useSelector((state: RootState) => state.tasks.error);
@@ -66,8 +67,8 @@ const TaskList: React.FC = () => {
 
     dispatch(updateTaskAsync({ taskId: Number(editingTask.id), updatedTask }))
       .unwrap()
-      .catch((err) => {
-        console.err("Update failed:", err); // 👈 Log the actual error
+      .catch((err:unknown) => {
+        console.error("Update failed:", err); // 👈 Log the actual error
         alert("Update failed: " + err.message);
       });
 

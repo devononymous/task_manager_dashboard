@@ -42,12 +42,20 @@ const TaskForm: React.FC = () => {
     },
   });
 
-  const { fields: assigneeFields, append: appendAssignee, remove: removeAssignee } = useFieldArray({
+  const {
+    fields: assigneeFields,
+    append: appendAssignee,
+    remove: removeAssignee,
+  } = useFieldArray({
     control,
     name: "assignees",
   });
 
-  const { fields: tagFields, append: appendTag, remove: removeTag } = useFieldArray({
+  const {
+    fields: tagFields,
+    append: appendTag,
+    remove: removeTag,
+  } = useFieldArray({
     control,
     name: "tags",
   });
@@ -55,7 +63,7 @@ const TaskForm: React.FC = () => {
   const onSubmit = (data: TaskFormSchema) => {
     const newTask = {
       id: Date.now(),
-      createdAt: new Date(),
+      createdAt:new Date().toISOString(),
       ...data,
       dueDate: new Date(data.dueDate),
       assignees: data.assignees.map((a) => a.name),
@@ -79,31 +87,45 @@ const TaskForm: React.FC = () => {
 
       {/* Title */}
       <div className="flex flex-col mb-2">
-        <label className="text-sm text-md mb-1 font-semibold text-gray-900 dark:text-white">Title</label>
+        <label className="text-sm text-md mb-1 font-semibold text-gray-900 dark:text-white">
+          Title
+        </label>
         <input
           {...register("title")}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="Task title"
         />
-        {errors.title && <span className="text-red-500 text-sm mt-1">{errors.title.message}</span>}
+        {errors.title && (
+          <span className="text-red-500 text-sm mt-1">
+            {errors.title.message}
+          </span>
+        )}
       </div>
 
       {/* Description */}
       <div className="flex flex-col mb-4 mt-3">
-        <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">Description</label>
+        <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">
+          Description
+        </label>
         <textarea
           {...register("description")}
           rows={3}
           placeholder="Task details"
           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
         />
-        {errors.description && <span className="text-red-500 text-sm mt-1">{errors.description.message}</span>}
+        {errors.description && (
+          <span className="text-red-500 text-sm mt-1">
+            {errors.description.message}
+          </span>
+        )}
       </div>
 
       {/* Status & Priority */}
       <div className="flex flex-col md:flex-row gap-4 mb-2">
         <div className="flex flex-col flex-1">
-          <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">Status</label>
+          <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">
+            Status
+          </label>
           <select
             {...register("status")}
             className="w-full px-2 py-3 rounded-lg border border-gray-300 dark:border-gray-600 text-dark focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -117,7 +139,9 @@ const TaskForm: React.FC = () => {
         </div>
 
         <div className="flex flex-col flex-1">
-          <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">Priority</label>
+          <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">
+            Priority
+          </label>
           <select
             {...register("priority")}
             className="w-full px-1 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
@@ -133,13 +157,19 @@ const TaskForm: React.FC = () => {
 
       {/* Due Date */}
       <div className="flex flex-col mt-3 mb-4">
-        <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">Due Date</label>
+        <label className="mb-1 text-sm text-md font-semibold text-gray-900 dark:text-white">
+          Due Date
+        </label>
         <input
           type="date"
           {...register("dueDate")}
           className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none"
         />
-        {errors.dueDate && <span className="text-red-500 text-sm mt-1">{errors.dueDate.message}</span>}
+        {errors.dueDate && (
+          <span className="text-red-500 text-sm mt-1">
+            {errors.dueDate.message}
+          </span>
+        )}
       </div>
 
       {/* Assignees */}
