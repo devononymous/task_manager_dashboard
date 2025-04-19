@@ -1,92 +1,7 @@
-// import React from "react";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../app/store";
-// import { Task } from "../app/features/TaskSlice"; // ✅ Corrected import
-
-// const statusColors: Record<Task["status"], string> = {
-//         "All": "bg-gray-100 text-gray-800",
-//   "To Do": "bg-gray-200 text-gray-800",
-//   "In Progress": "bg-yellow-200 text-yellow-800",
-//   "Completed": "bg-green-200 text-green-800",
-//   "Blocked": "bg-red-200 text-red-800",
-// };
-
-// const priorityColors: Record<Task["priority"], string> = {
-//         All: "bg-gray-100 text-gray-800",
-//   Low: "bg-green-100 text-green-800",
-//   Medium: "bg-yellow-100 text-yellow-800",
-//   High: "bg-orange-100 text-orange-800",
-//   Urgent: "bg-red-100 text-red-800",
-// };
-
-// const TaskList: React.FC = () => {
-//   const tasks = useSelector((state: RootState) => state.tasks.tasks);
-
-//   return (
-// <div className="p-4 md:p-6 mt-1 h-screen overflow-y-auto w-full">
-//   <p className=" text-center text-2xl md:text-2xl font-bold  text-yellow-300  mb-6">Tasks List</p>
-
-//   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 ">
-//     {tasks.map((task) => (
-//       <div
-//         key={task.id}
-//         className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-md rounded-lg p-4 md:p-5 transition-all"
-//       >
-//         <div className="flex gap-4 md:gap-6 items-start mb-3">
-//           <div className="flex-1">
-//             <h2 className="text-base md:text-lg font-semibold text-gray-900 dark:text-white">
-//               {task.title}
-//             </h2>
-//             <p className="text-sm text-gray-600 dark:text-gray-300">{task.description}</p>
-//           </div>
-//           <div className="flex flex-col items-end space-y-1 text-sm">
-//             <span className="font-semibold">Status</span>
-//             <span className={`px-2 py-0.5 rounded ${statusColors[task.status]}`}>
-//               {task.status}
-//             </span>
-//             <span className="font-semibold mt-2">Priority</span>
-//             <span className={`px-2 py-0.5 rounded ${priorityColors[task.priority]}`}>
-//               {task.priority}
-//             </span>
-//             <span className="mt-4 font-semibold">Assigned By</span>
-//           </div>
-//         </div>
-
-//         <div className="flex justify-between items-center text-sm text-gray-600 dark:text-gray-400">
-//           <span>🕒 Due: {new Date(task.dueDate).toLocaleDateString()}</span>
-//           <div className="flex flex-wrap gap-1">
-//             {task.assignees.map((person, idx) => (
-//               <span
-//                 key={idx}
-//                 className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full"
-//               >
-//                 {person}
-//               </span>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     ))}
-
-//     {tasks.length === 0 && (
-//       <div className="col-span-full text-center text-gray-500 dark:text-gray-400 mt-10">
-//         No tasks available. Add one to get started!
-//       </div>
-//     )}
-//   </div>
-// </div>
-
-
-
-//   );
-// };
-
-// export default TaskList;
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../app/store";
-import { Task, moveTask } from "../app/features/TaskSlice";
+import { Task, moveTask, fetchTasks, updateTaskAsync, deleteTaskAsync } from "../app/features/TaskSlice";
 import {
   DragDropContext,
   Droppable,
@@ -95,23 +10,33 @@ import {
 } from "react-beautiful-dnd";
 
 const statusColors: Record<Task["status"], string> = {
-  "All":"bg-purple text-pink-600",
   "To Do": "bg-gray-200 text-gray-800",
   "In Progress": "bg-yellow-200 text-yellow-800",
-  "Completed": "bg-green-200 text-green-800",
-  "Blocked": "bg-red-200 text-red-800",
+  Completed: "bg-green-200 text-green-800",
+  Blocked: "bg-red-200 text-red-800",
 };
 
 const TaskList: React.FC = () => {
   const dispatch = useDispatch();
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const loading = useSelector((state: RootState) => state.tasks.loading);
+  const error = useSelector((state: RootState) => state.tasks.error);
 
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [updatedTitle, setUpdatedTitle] = useState("");
+  const [updatedDescription, setUpdatedDescription] = useState("");
+
+  // Fetch tasks on component mount
+  useEffect(() => {
+    dispatch(fetchTasks());
+  }, [dispatch]);
+
+  // Group tasks by status
   const tasksByStatus: Record<Task["status"], Task[]> = {
-    "All":[],
     "To Do": [],
     "In Progress": [],
-    "Completed": [],
-    "Blocked": [],
+    Completed: [],
+    Blocked: [],
   };
 
   tasks.forEach((task) => {
@@ -130,6 +55,31 @@ const TaskList: React.FC = () => {
       })
     );
   };
+
+  const handleUpdateTask = () => {
+    if (editingTask) {
+      const updatedTask = {
+        title: updatedTitle,
+        description: updatedDescription,
+      };
+      dispatch(updateTaskAsync({ taskId: editingTask.id, updatedTask }));
+      setEditingTask(null);
+      setUpdatedTitle("");
+      setUpdatedDescription("");
+    }
+  };
+
+  const handleDeleteTask = (taskId: number) => {
+    dispatch(deleteTaskAsync(taskId));
+  };
+
+  if (loading) {
+    return <div className="text-center">Loading tasks...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500">Error: {error}</div>;
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -177,6 +127,26 @@ const TaskList: React.FC = () => {
                               </span>
                             ))}
                           </div>
+
+                          {/* Edit and Delete Buttons */}
+                          <div className="mt-3 flex gap-2">
+                            <button
+                              className="bg-yellow-500 text-sm text-gray-600 hover:text-yellow-400 px-2 py-1 rounded"
+                              onClick={() => {
+                                setEditingTask(task);
+                                setUpdatedTitle(task.title);
+                                setUpdatedDescription(task.description);
+                              }}
+                            >
+                              ✍️
+                            </button>
+                            <button
+                              className="bg-red-500 px-2 py-1 rounded  text-gray-600 hover:text-red-400"
+                              onClick={() => handleDeleteTask(task.id)}
+                            >
+                              🗑️
+                            </button>
+                          </div>
                         </div>
                       )}
                     </Draggable>
@@ -195,6 +165,42 @@ const TaskList: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Update Modal */}
+      {editingTask && (
+        <div className="fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-20 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-lg font-bold mb-4 text-grey">Edit Task</h2>
+            <input
+              type="text"
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              placeholder="Task Title"
+              value={updatedTitle}
+              onChange={(e) => setUpdatedTitle(e.target.value)}
+            />
+            <textarea
+              className="w-full p-2 mb-4 border border-gray-300 rounded"
+              placeholder="Task Description"
+              value={updatedDescription}
+              onChange={(e) => setUpdatedDescription(e.target.value)}
+            />
+            <div className="flex justify-between">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+                onClick={handleUpdateTask}
+              >
+                Save
+              </button>
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded"
+                onClick={() => setEditingTask(null)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DragDropContext>
   );
 };
