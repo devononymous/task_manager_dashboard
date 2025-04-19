@@ -16,7 +16,7 @@
 
 /* Light theme styles */
 .app-container.light {
-  background-color: #d6f6d6;
+  background-color: #3ba0a0;
   color: var(--text-color-dark);  /* Use text color from the variable */
 }
 

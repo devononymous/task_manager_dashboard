@@ -8,8 +8,8 @@ interface ChecklistItem {
   done: boolean;
 }
 
-type Status =  "To Do" | "In Progress" | "Completed" | "Blocked";
-type Priority =   "Low" | "Medium" | "High" | "Urgent";
+type Status = "To Do" | "In Progress" | "Completed" | "Blocked";
+type Priority = "Low" | "Medium" | "High" | "Urgent";
 
 export interface Task {
   id: number;
@@ -17,9 +17,9 @@ export interface Task {
   description: string;
   status: Status;
   priority: Priority;
-  createdAt: Date;
+  createdAt: string; // Use string for json-server compatibility
   assignees: string[];
-  dueDate: Date;
+  dueDate: string;   // Same here
   tags: string[];
   comments: string[];
   checklist: ChecklistItem[];
@@ -37,7 +37,7 @@ const initialState: TaskState = {
   error: null,
 };
 
-// Async thunk to fetch tasks
+// ✅ FETCH TASKS
 export const fetchTasks = createAsyncThunk<Task[]>(
   "tasks/fetchTasks",
   async () => {
@@ -46,21 +46,30 @@ export const fetchTasks = createAsyncThunk<Task[]>(
   }
 );
 
-// Async thunk to update a task
 export const updateTaskAsync = createAsyncThunk(
   "tasks/updateTask",
-  async ({ taskId, updatedTask }: { taskId: number; updatedTask: Partial<Task> }) => {
-    const response = await axiosInstance.patch(`/tasks/${taskId}`, updatedTask);
-    return response.data as Task;
+  async ({ taskId, updatedTask }: { taskId: number; updatedTask: Partial<Task> }, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.patch(`/tasks/${taskId}`, updatedTask);
+      return response.data as Task;
+    } catch (err: any) {
+      console.error("Update failed:", err.response?.data || err.message);
+      return rejectWithValue(err.response?.data || "Update failed");
+    }
   }
 );
-
-// Async thunk to delete a task
+// ✅ DELETE TASK (with logging)
 export const deleteTaskAsync = createAsyncThunk(
   "tasks/deleteTask",
-  async (taskId: number) => {
-    await axiosInstance.delete(`/tasks/${taskId}`);
-    return taskId;
+  async (taskId: number, { rejectWithValue }) => {
+    try {
+      console.log("Deleting task:", taskId);
+      await axiosInstance.delete(`/tasks/${taskId}`);
+      return taskId;
+    } catch (error: any) {
+      console.error("Delete error:", error.message);
+      return rejectWithValue("Failed to delete task.");
+    }
   }
 );
 
@@ -97,7 +106,7 @@ export const taskSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch tasks
+      // Fetch
       .addCase(fetchTasks.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -108,37 +117,27 @@ export const taskSlice = createSlice({
       })
       .addCase(fetchTasks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch tasks";
+        state.error = action.error.message || "Failed to fetch tasks.";
       })
-      // Update task
-      .addCase(updateTaskAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Update
       .addCase(updateTaskAsync.fulfilled, (state, action) => {
-        state.loading = false;
         const updatedTask = action.payload;
-        const taskIndex = state.tasks.findIndex((task) => task.id === updatedTask.id);
-        if (taskIndex !== -1) {
-          state.tasks[taskIndex] = updatedTask;
+        const index = state.tasks.findIndex((task) => task.id === updatedTask.id);
+        if (index !== -1) {
+          state.tasks[index] = updatedTask;
         }
       })
-      .addCase(updateTaskAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to update task";
-      })
-      // Delete task
-      .addCase(deleteTaskAsync.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
+      // Delete
       .addCase(deleteTaskAsync.fulfilled, (state, action) => {
-        state.loading = false;
         state.tasks = state.tasks.filter((task) => task.id !== action.payload);
       })
+      // Error Handling
+     .addCase(updateTaskAsync.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.error.message || "Failed to update task";
+})
       .addCase(deleteTaskAsync.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to delete task";
+        state.error = action.payload as string;
       });
   },
 });

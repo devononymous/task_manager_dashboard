@@ -57,17 +57,26 @@ const TaskList: React.FC = () => {
   };
 
   const handleUpdateTask = () => {
-    if (editingTask) {
-      const updatedTask = {
-        title: updatedTitle,
-        description: updatedDescription,
-      };
-      dispatch(updateTaskAsync({ taskId: editingTask.id, updatedTask }));
-      setEditingTask(null);
-      setUpdatedTitle("");
-      setUpdatedDescription("");
-    }
-  };
+  if (editingTask) {
+    const updatedTask = {
+      title: updatedTitle,
+      description: updatedDescription,
+    };
+    console.log("Updating task:", { taskId: editingTask.id, updatedTask });
+
+    dispatch(updateTaskAsync({ taskId: Number(editingTask.id), updatedTask }))
+      .unwrap()
+      .catch((err) => {
+        console.err("Update failed:", err); // 👈 Log the actual error
+        alert("Update failed: " + err.message);
+      });
+
+    setEditingTask(null);
+    setUpdatedTitle("");
+    setUpdatedDescription("");
+  }
+};
+
 
   const handleDeleteTask = (taskId: number) => {
     dispatch(deleteTaskAsync(taskId));
@@ -167,40 +176,44 @@ const TaskList: React.FC = () => {
       </div>
 
       {/* Update Modal */}
-      {editingTask && (
-        <div className="fixed top-0 left-0 w-full h-full bg-gray-600 bg-opacity-20 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-lg font-bold mb-4 text-grey">Edit Task</h2>
-            <input
-              type="text"
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-              placeholder="Task Title"
-              value={updatedTitle}
-              onChange={(e) => setUpdatedTitle(e.target.value)}
-            />
-            <textarea
-              className="w-full p-2 mb-4 border border-gray-300 rounded"
-              placeholder="Task Description"
-              value={updatedDescription}
-              onChange={(e) => setUpdatedDescription(e.target.value)}
-            />
-            <div className="flex justify-between">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-                onClick={handleUpdateTask}
-              >
-                Save
-              </button>
-              <button
-                className="bg-gray-500 text-white px-4 py-2 rounded"
-                onClick={() => setEditingTask(null)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+     {editingTask && (
+  <div className="fixed top-0 left-0 w-full h-full z-50 bg-black bg-opacity-50 flex justify-center items-center">
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-xl w-96">
+      <h2 className="text-lg font-bold mb-4 text-gray-800 dark:text-white">Edit Task</h2>
+
+      <input
+        type="text"
+        className="w-full p-2 mb-4 border border-gray-300 rounded dark:bg-gray-800 dark:text-white"
+        placeholder="Task Title"
+        value={updatedTitle}
+        onChange={(e) => setUpdatedTitle(e.target.value)}
+      />
+
+      <textarea
+        className="w-full p-2 mb-4 border border-gray-300 rounded dark:bg-gray-800 dark:text-white"
+        placeholder="Task Description"
+        value={updatedDescription}
+        onChange={(e) => setUpdatedDescription(e.target.value)}
+      />
+
+      <div className="flex justify-between">
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          onClick={handleUpdateTask}
+        >
+          Save
+        </button>
+        <button
+          className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded"
+          onClick={() => setEditingTask(null)}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </DragDropContext>
   );
 };
