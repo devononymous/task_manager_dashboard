@@ -23,10 +23,10 @@ const TaskList: React.FC = () => {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   return (
-<div className="p-4 md:p-6 mt-2 h-screen overflow-y-auto w-full">
-  <p className="text-2xl md:text-2xl font-bold text-gray-800 dark:text-white mb-6">Tasks List</p>
+<div className="p-4 md:p-6 mt-1 h-screen overflow-y-auto w-full">
+  <p className=" text-center text-2xl md:text-2xl font-bold  text-yellow-300  mb-6">Tasks List</p>
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 ">
     {tasks.map((task) => (
       <div
         key={task.id}
