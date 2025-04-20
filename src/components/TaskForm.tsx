@@ -65,7 +65,7 @@ const TaskForm: React.FC = () => {
       id: Date.now(),
       createdAt:new Date().toISOString(),
       ...data,
-      dueDate: new Date(data.dueDate),
+      dueDate: new Date(data.dueDate).toISOString(),
       assignees: data.assignees.map((a) => a.name),
       tags: data.tags.map((t) => t.tag),
       comments: [],

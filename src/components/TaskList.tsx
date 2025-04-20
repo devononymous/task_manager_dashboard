@@ -69,7 +69,11 @@ const TaskList: React.FC = () => {
       .unwrap()
       .catch((err:unknown) => {
         console.error("Update failed:", err); // 👈 Log the actual error
-        alert("Update failed: " + err.message);
+        if (err instanceof Error) {
+          alert("Update failed: " + err.message);
+        } else {
+          alert("Update failed: An unknown error occurred.");
+        }
       });
 
     setEditingTask(null);
