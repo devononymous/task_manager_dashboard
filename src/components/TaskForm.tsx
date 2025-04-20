@@ -193,7 +193,7 @@ const TaskForm: React.FC = () => {
         <button
           type="button"
           onClick={() => appendAssignee({ name: "" })}
-          className="text-sm text-md text-indigo-600 dark:text-indigo-400 text-sm hover:underline self-start"
+          className=" text-md text-indigo-600 dark:text-indigo-400 text-sm hover:underline self-start"
         >
           ➕ Add Assignee
         </button>
