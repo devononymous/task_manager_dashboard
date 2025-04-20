@@ -1,54 +1,55 @@
-# React + TypeScript + Vite
+# 📋 Task Manager Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Live Demo 👉 [https://task-manager-dashboard-cbnq.vercel.app](https://task-manager-dashboard-cbnq.vercel.app)
 
-Currently, two official plugins are available:
+A beautiful, drag-and-drop task management dashboard built with modern frontend architecture and powered by a mock backend. Designed for speed, scalability, and usability.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+![Vercel](https://img.shields.io/badge/deployed-Vercel-000?logo=vercel&style=flat-square)
+![Render](https://img.shields.io/badge/backend-Render-3c3c3c?logo=render&style=flat-square)
+![License](https://img.shields.io/github/license/devononymous/task-manager-dashboard?style=flat-square)
+![Stars](https://img.shields.io/github/stars/devononymous/task-manager-dashboard?style=flat-square)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 🎥 Demo
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+![task-manager-demo](https://user-images.githubusercontent.com/your-github-id/demo.gif)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+---
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## ✨ Features
+
+- ✅ Create, update, and delete tasks
+- 📌 Drag-and-drop support for task rearrangement
+- 🌟 Filter and organize tasks by project or status
+- 🗾 Deadline indicators and task statuses
+- 🏦 Persistent storage with `json-server` backend
+- 🌐 Responsive layout for all devices
+- ⚖️ State management with Redux Toolkit
+
+---
+
+## 🛠️ Tech Stack
+
+| Frontend             | Backend              | Styling              |
+|----------------------|----------------------|----------------------|
+| React (18+)          | JSON Server          | Tailwind CSS         |
+| TypeScript           | REST API (mock)      | Custom Components    |
+| Vite                 | Render Hosting       | Drag & Drop (DND)    |
+| Redux Toolkit        | Express (Optional)   | Responsive Design    |
+
+---
+
+## 🚀 Live URLs
+
+| Part     | URL                                                                 |
+|----------|---------------------------------------------------------------------|
+| Frontend | [https://task-manager-dashboard-cbnq.vercel.app](https://task-manager-dashboard-cbnq.vercel.app) |
+| Backend  | [https://task-manager-mock-backend-u8d4.onrender.com](https://task-manager-mock-backend-u8d4.onrender.com) |
+
+---
+
+## 📂 Folder Structure (Frontend)
+
